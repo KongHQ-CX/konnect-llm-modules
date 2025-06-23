@@ -36,23 +36,3 @@ resource "konnect_gateway_data_plane_client_certificate" "this" {
   cert             = tls_self_signed_cert.this.cert_pem
   control_plane_id = konnect_gateway_control_plane.this.id
 }
-
-output "control_plane_hostnamee" {
-  value = regex("^(?:(?P<scheme>[^:/?#]+):)?(?://(?P<authority>[^/?#]*))?", konnect_gateway_control_plane.this.config.control_plane_endpoint)["authority"]
-}
-
-output "telemetry_hostname" {
-  value = regex("^(?:(?P<scheme>[^:/?#]+):)?(?://(?P<authority>[^/?#]*))?", konnect_gateway_control_plane.this.config.telemetry_endpoint)["authority"]
-}
-
-output "cluster_cert_pem" {
-  value = tls_self_signed_cert.this.cert_pem
-}
-
-output "cluster_cert_key_pem" {
-  value = tls_private_key.this.private_key_pem
-}
-
-output "control_plane_id" {
-  value = konnect_gateway_control_plane.this.id
-}
