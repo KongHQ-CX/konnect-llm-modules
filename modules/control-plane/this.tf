@@ -36,3 +36,21 @@ resource "konnect_gateway_data_plane_client_certificate" "this" {
   cert             = tls_self_signed_cert.this.cert_pem
   control_plane_id = konnect_gateway_control_plane.this.id
 }
+
+resource "konnect_gateway_plugin_pre_function" "body_router" {
+  config = {
+    rewrite = [
+      <<EOT
+        if not kong.request.get_header("X-Model") then
+          local b = kong.request.get_body("application/json")
+
+          if b and b.model then
+            kong.service.request.set_header("X-Model", b.model)
+          end
+        end
+EOT
+    ]
+  }
+  
+  control_plane_id = konnect_gateway_control_plane.this.id
+}
