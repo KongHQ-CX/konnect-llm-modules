@@ -13,6 +13,7 @@ output "cluster_cert_pem" {
 
 output "cluster_cert_key_pem" {
   value = tls_private_key.this.private_key_pem
+  sensitive = true
 }
 
 output "control_plane_id" {
