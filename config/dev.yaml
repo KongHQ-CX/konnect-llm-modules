@@ -1,3 +1,7 @@
+consumers:
+- username: simon
+- username: jack
+
 llms:
   - name: gemini-1.5-pro
     base_path: /chat/completions

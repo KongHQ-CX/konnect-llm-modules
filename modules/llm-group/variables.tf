@@ -4,6 +4,12 @@ variable "llms" {
   default     = []
 }
 
+variable "consumers" {
+  description = "Consumers to apply to the control plane"
+  type        = any
+  default     = []
+}
+
 variable "control_plane_id" {
   type = string
 }
