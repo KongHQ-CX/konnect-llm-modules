@@ -1,0 +1,37 @@
+llms:
+  - name: gemini-1.5-pro
+    base_path: /chat/completions
+    llm_format: openai
+    targets:
+      - model:
+          name: gemini-1.5-pro
+          provider: gemini
+          options:
+            gemini:
+              api_endpoint: us-east5-aiplatform.googleapis.com
+              project_id: gcp-fieldeng-dev
+              location_id: us-east5
+        auth:
+          gcp_use_service_account: true
+          allow_override: false
+        logging:
+          log_payloads: false
+          log_statistics: true
+  - name: gemini-2.5-flash
+    base_path: /chat/completions
+    llm_format: openai
+    targets:
+      - model:
+          name: gemini-2.5-flash
+          provider: gemini
+          options:
+            gemini:
+              api_endpoint: us-east5-aiplatform.googleapis.com
+              project_id: gcp-fieldeng-dev
+              location_id: us-east5
+        auth:
+          gcp_use_service_account: true
+          allow_override: false
+        logging:
+          log_payloads: false
+          log_statistics: true
