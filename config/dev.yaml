@@ -8,9 +8,9 @@ llms:
           provider: gemini
           options:
             gemini:
-              api_endpoint: us-east5-aiplatform.googleapis.com
-              project_id: gcp-fieldeng-dev
-              location_id: us-east5
+              api_endpoint: ${ GEMINI_API_ENDPOINT }
+              project_id: ${ GEMINI_PROJECT_ID }
+              location_id: ${ GEMINI_LOCATION_ID }
         auth:
           gcp_use_service_account: true
           allow_override: false
@@ -26,9 +26,9 @@ llms:
           provider: gemini
           options:
             gemini:
-              api_endpoint: us-east5-aiplatform.googleapis.com
-              project_id: gcp-fieldeng-dev
-              location_id: us-east5
+              api_endpoint: ${ GEMINI_API_ENDPOINT }
+              project_id: ${ GEMINI_PROJECT_ID }
+              location_id: ${ GEMINI_LOCATION_ID }
         auth:
           gcp_use_service_account: true
           allow_override: false
