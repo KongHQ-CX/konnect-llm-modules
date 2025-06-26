@@ -1,0 +1,122 @@
+#
+# Redis Standalone service
+#
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  labels:
+    app: redis
+    environment: dev
+spec:
+  publishNotReadyAddresses: true
+  ports:
+  - port: 6379
+    targetPort: 6379
+    name: client
+  - port: 6380
+    targetPort: 6380
+    name: client-tls
+  - port: 16379
+    targetPort: 16379
+    name: gossip
+  selector:
+    app: redis
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+spec:
+  podManagementPolicy: OrderedReady # default
+  serviceName: redis
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis # has to match .spec.template.metadata.labels
+  template:
+    metadata:
+      labels:
+        app: redis
+        name: redis
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: redis
+        image: redis/redis-stack-server:7.2.0-v17
+        ports:
+        - containerPort: 6379
+          name: client
+        - containerPort: 6380
+          name: client-tls
+        - containerPort: 16379
+          name: gossip
+        readinessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - "redis-cli -h $(hostname) ping"
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+        securityContext:
+            capabilities:
+              add:
+                - IPC_LOCK
+        # Mark a node as down if Redis server stops running
+        livenessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - "redis-cli -a root -h $(hostname) ping"
+          initialDelaySeconds: 20
+          periodSeconds: 3
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: NUM_SHARDS
+          value: "3"  # If you modify this value, make sure there are at least 2 times the number of replicas
+        volumeMounts:
+        - name: conf
+          mountPath: /conf
+          readOnly: false
+        - name: podinfo
+          mountPath: /etc/podinfo
+          readOnly: false
+      volumes:
+      # Insert our pre-baked Redis configuration file into /conf/redis.conf
+      - name: conf
+        configMap:
+          name: redis-config
+      # The init container will use this info to find cluster peers
+      - name: podinfo
+        downwardAPI:
+          items:
+            - path: "labels"
+              fieldRef:
+                fieldPath: metadata.labels
+            - path: "annotations"
+              fieldRef:
+                fieldPath: metadata.annotations
+            - path: "pod_name"
+              fieldRef:
+                fieldPath: metadata.name
+            - path: "pod_namespace"
+              fieldRef:
+                fieldPath: metadata.namespace
+  volumeClaimTemplates:
+  - metadata:
+      name: datadir
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 10Gi
