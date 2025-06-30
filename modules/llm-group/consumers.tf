@@ -8,9 +8,6 @@ resource "konnect_gateway_consumer" "this_each" {
 resource "konnect_gateway_key_auth" "this_each" {
   for_each = { for consumer in var.consumers : consumer.username => consumer }
 
-  consumer = {
-    id = konnect_gateway_consumer.this_each[each.key].id
-  }
   consumer_id      = konnect_gateway_consumer.this_each[each.key].id
   control_plane_id = var.control_plane_id
 

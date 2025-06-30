@@ -4,6 +4,7 @@ consumers:
 
 llms:
   - name: gemini-1.5-pro
+    route_type: "llm/v1/chat"
     base_path: /chat/completions
     llm_format: openai
     targets:
@@ -21,7 +22,26 @@ llms:
         logging:
           log_payloads: false
           log_statistics: true
+    tshirt:
+      large:
+        limit:
+          - 100000
+        window_size:
+          - 3600
+      medium:
+        limit:
+          - 5000
+        window_size:
+          - 60
+      small:
+        limit:
+          - 2000
+          - 86400
+        window_size:
+          - 60
+          - 100000
   - name: gemini-2.5-flash
+    route_type: "llm/v1/chat"
     base_path: /chat/completions
     llm_format: openai
     targets:
@@ -39,3 +59,21 @@ llms:
         logging:
           log_payloads: false
           log_statistics: true
+    tshirt:
+      large:
+        limit:
+          - 100000
+        window_size:
+          - 3600
+      medium:
+        limit:
+          - 5000
+        window_size:
+          - 60
+      small:
+        limit:
+          - 5000
+          - 86400
+        window_size:
+          - 60
+          - 200000
